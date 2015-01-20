@@ -65,6 +65,7 @@ angular.module('google.places', [])
                     function initEvents() {
                         element.bind('keydown', onKeydown);
                         element.bind('blur', onBlur);
+                        element.bind('submit', onBlur);
 
                         $scope.$watch('selected', select);
                     }
@@ -192,6 +193,21 @@ angular.module('google.places', [])
                                 if ($scope.predictions.length > 5) {
                                     $scope.predictions.length = 5;  // trim predictions down to size
                                 }
+
+                                if ($scope.predictions.length === 0 && $scope.forceSelection) {
+
+                                    var phase = $scope.$root.$$phase;
+                                    var emptyModel = function() {
+                                        $scope.model = '';
+                                    };
+                                    if(phase == '$apply' || phase == '$digest') {
+                                        emptyModel();
+                                    } else {
+                                        $scope.$apply(emptyModel);
+                                    }
+                                    $scope.$emit('g-places-autocomplete:empty', true);
+                                }
+
                             });
                         });
 
@@ -284,11 +300,11 @@ angular.module('google.places', [])
                     }
 
                     function isString(val) {
-                        return toString.call(val) == '[object String]';
+                        return Object.prototype.toString.call(val) == '[object String]';
                     }
 
                     function isObject(val) {
-                        return toString.call(val) == '[object Object]';
+                        return Object.prototype.toString.call(val) == '[object Object]';
                     }
 
                     function indexOf(array, item) {
@@ -359,7 +375,7 @@ angular.module('google.places', [])
 
                 $scope.$watch('predictions', function () {
                     $scope.position = getDrawerPosition($scope.input);
-                });
+                }, true);
 
                 function getDrawerPosition(element) {
                     var domEl = element[0],

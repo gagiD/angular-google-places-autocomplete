@@ -1,3 +1,5 @@
+This is a modified version of the following, including pull requests that were currently open and other minor modifications:
+
 angular-google-places-autocomplete
 ================
 
