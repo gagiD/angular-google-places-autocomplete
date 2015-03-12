@@ -170,6 +170,10 @@ angular.module('google.places', [])
                     function parse(viewValue) {
                         var request;
 
+                        if (isString($scope.options.input)) {
+                            $scope.options.input += ' ' + viewValue;
+                        }
+
                         if (!(viewValue && isString(viewValue))) return viewValue;
 
                         $scope.query = viewValue;
